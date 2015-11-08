@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by User on 08.11.2015.
- */
-public class TabFragment  extends Fragment {
+
+public class TabFragment extends Fragment {
     public static final int LAYOUT = R.layout.tab_fragment;
     private View view;
 
