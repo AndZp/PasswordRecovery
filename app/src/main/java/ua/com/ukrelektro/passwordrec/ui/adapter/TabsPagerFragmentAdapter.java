@@ -1,12 +1,12 @@
-package ua.com.ukrelektro.passwordrec;
+package ua.com.ukrelektro.passwordrec.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-/**
- * Created by User on 08.11.2015.
- */
+import ua.com.ukrelektro.passwordrec.ui.CheckerFragment;
+import ua.com.ukrelektro.passwordrec.ui.HistoryFragment;
+
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     private String[] tabsArr;
 
@@ -24,11 +24,9 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return TabFragment.getInstanse();
+                return CheckerFragment.getInstance();
             case 1:
-                return TabFragment.getInstanse();
-            case 2:
-                return TabFragment.getInstanse();
+                return HistoryFragment.getInstanse();
         }
         return null;
     }

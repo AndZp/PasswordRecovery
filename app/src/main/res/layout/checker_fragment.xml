@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/NextPingCode"
+        android:id="@+id/tvNextPinCode"
+        android:layout_marginTop="37dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0000"
+        android:id="@+id/tvCurrentCode"
+        android:layout_below="@+id/tvNextPinCode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textSize="40dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Worked"
+        android:id="@+id/btnWorked"
+        android:layout_below="@+id/tvCurrentCode"
+        android:layout_toLeftOf="@+id/tvCurrentCode"
+        android:layout_toStartOf="@+id/tvCurrentCode"
+        android:onClick="nextNumber" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:id="@+id/btnNext"
+        android:layout_alignTop="@+id/btnWorked"
+        android:layout_toRightOf="@+id/tvCurrentCode"
+        android:layout_toEndOf="@+id/tvCurrentCode"
+        android:onClick="nextNumber" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Progress"
+        android:id="@+id/tvProgress"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/btnWorked"
+        android:layout_toLeftOf="@+id/tvNextPinCode"
+        android:layout_toStartOf="@+id/tvNextPinCode" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarPercent"
+        android:max="100"
+        android:progress="0"
+        android:indeterminate="false"
+        android:layout_below="@+id/tvProgress"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0.0% Percent covered"
+        android:id="@+id/tvPercentCovered"
+        android:layout_below="@+id/progressBarPercent"
+        android:layout_centerHorizontal="true" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarTestedOut"
+        android:indeterminate="false"
+        android:max="9999"
+        android:progress="0"
+        android:layout_below="@+id/tvPercentCovered"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0 Tested out of 9,999"
+        android:id="@+id/tvTestedOut"
+        android:layout_below="@+id/progressBarTestedOut"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

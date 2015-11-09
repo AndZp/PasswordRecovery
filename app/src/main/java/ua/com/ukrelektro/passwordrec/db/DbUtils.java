@@ -7,21 +7,36 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import ua.com.ukrelektro.passwordrec.model.Code;
+import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
 
 public class DbUtils {
 
-
+    /**
+     * Parse CSV file to List and add data to Singleton
+     *
+     * @param inputStream intputStream of CSV file
+     * @return ArrayList of Code object from CSV file
+     */
     public static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) {
 
-        ArrayList resultList = new ArrayList();
+
+        ArrayList<Code> resultList = new ArrayList();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        int sumOfCodes = 0;
+        int sumOfCounts = 0;
+
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
                 String[] row = csvLine.split(",");
+
                 int code = Integer.parseInt(row[0]);
+                sumOfCodes++;
+
                 int count = Integer.parseInt(row[1]);
+                sumOfCounts += count;
                 resultList.add(new Code(code, count, Status.NOT_CHECK));
             }
         } catch (IOException ex) {
@@ -33,6 +48,9 @@ public class DbUtils {
                 throw new RuntimeException("Error while closing input stream: " + e);
             }
         }
+        Singleton.getInstance().setCodesList(resultList);
+        Singleton.getInstance().setSumCount(sumOfCounts);
+        Singleton.getInstance().setSumCode(sumOfCodes);
         return resultList;
     }
 }

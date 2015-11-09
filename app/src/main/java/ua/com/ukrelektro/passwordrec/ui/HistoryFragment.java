@@ -1,4 +1,4 @@
-package ua.com.ukrelektro.passwordrec;
+package ua.com.ukrelektro.passwordrec.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,15 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ua.com.ukrelektro.passwordrec.R;
 
-public class TabFragment extends Fragment {
-    public static final int LAYOUT = R.layout.tab_fragment;
+
+public class HistoryFragment extends Fragment {
+    public static final int LAYOUT = R.layout.history_fragment;
     private View view;
 
 
-    public static TabFragment getInstanse() {
+    public static HistoryFragment getInstanse() {
         Bundle args = new Bundle();
-        TabFragment fragment = new TabFragment();
+        HistoryFragment fragment = new HistoryFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -24,8 +26,9 @@ public class TabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         view = inflater.inflate(LAYOUT, container, false);
         return view;
     }
+
+
 }

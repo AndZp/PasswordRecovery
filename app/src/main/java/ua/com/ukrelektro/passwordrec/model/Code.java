@@ -5,6 +5,13 @@ public class Code {
     private int count;
     private Status status;
 
+    /**
+     * Object Code
+     *
+     * @param code   int code
+     * @param count  int count
+     * @param status current status of check
+     */
     public Code(int code, int count, Status status) {
         this.code = code;
         this.count = count;
