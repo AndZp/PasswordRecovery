@@ -1,4 +1,4 @@
-package ua.com.ukrelektro.passwordrec.db;
+package ua.com.ukrelektro.passwordrec.control;
 
 import android.content.ContentValues;
 import android.content.Context;

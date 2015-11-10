@@ -1,9 +1,12 @@
 package ua.com.ukrelektro.passwordrec.model;
 
+import java.util.Date;
+
 public class Code {
     private int code;
     private int count;
     private Status status;
+    private Date date;
 
     /**
      * Object Code
@@ -40,5 +43,13 @@ public class Code {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

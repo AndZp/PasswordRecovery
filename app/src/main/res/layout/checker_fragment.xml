@@ -62,8 +62,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBarPercent"
         android:max="100"
-        android:progress="0"
+        android:progress="50"
         android:indeterminate="false"
+
         android:layout_below="@+id/tvProgress"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

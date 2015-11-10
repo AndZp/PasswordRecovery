@@ -1,4 +1,4 @@
-package ua.com.ukrelektro.passwordrec.ui;
+package ua.com.ukrelektro.passwordrec.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,8 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ua.com.ukrelektro.passwordrec.R;
-import ua.com.ukrelektro.passwordrec.db.DatabaseHelper;
-import ua.com.ukrelektro.passwordrec.model.CodeChecker;
+import ua.com.ukrelektro.passwordrec.control.CodeChecker;
+import ua.com.ukrelektro.passwordrec.control.DbUtils;
 import ua.com.ukrelektro.passwordrec.model.Status;
 import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
 
@@ -26,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int LAYOUT = R.layout.activity_main;
 
     private ViewPager mViewPager;
-    private DatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
 
-        initDb();
+        DbUtils.getDbHelper(this);
         initToolbar();
         initTabLayout();
         initActionButton();
@@ -61,34 +60,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * onClick handler for button "Worked and Next"
-     *
-     * @param view current view
-     */
-    public void nextNumber(View view) {
-
-        switch (view.getId()) {
-            case R.id.btnNext:
-                CodeChecker.checkCode(Status.FAIL);
-                initTabLayout();
-                break;
-            case R.id.btnWorked:
-                CodeChecker.checkCode(Status.PASS);
-                initTabLayout();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * DataBase initialization
-     */
-    private void initDb() {
-        mDatabaseHelper = DatabaseHelper.getInstance(this);
     }
 
     /**
@@ -121,13 +92,33 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-
     /**
      * Toolbar initialization
      */
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    /**
+     * onClick handler for button "Worked and Next"
+     *
+     * @param view current view
+     */
+    public void nextNumber(View view) {
+
+        switch (view.getId()) {
+            case R.id.btnNext:
+                CodeChecker.checkCode(Status.FAIL);
+                initTabLayout();
+                break;
+            case R.id.btnWorked:
+                CodeChecker.checkCode(Status.PASS);
+                initTabLayout();
+                break;
+            default:
+                break;
+        }
     }
 
 }

@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import ua.com.ukrelektro.passwordrec.ui.CheckerFragment;
-import ua.com.ukrelektro.passwordrec.ui.HistoryFragment;
+import ua.com.ukrelektro.passwordrec.ui.fragment.CheckerFragment;
+import ua.com.ukrelektro.passwordrec.ui.fragment.HistoryFragment;
 
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     private String[] tabsArr;

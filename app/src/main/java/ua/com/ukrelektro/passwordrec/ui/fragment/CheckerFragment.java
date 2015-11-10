@@ -1,4 +1,4 @@
-package ua.com.ukrelektro.passwordrec.ui;
+package ua.com.ukrelektro.passwordrec.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,10 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ua.com.ukrelektro.passwordrec.R;
-import ua.com.ukrelektro.passwordrec.model.CodeChecker;
+import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 
 /**
  * Fragment with CodeChecker
@@ -17,6 +18,7 @@ import ua.com.ukrelektro.passwordrec.model.CodeChecker;
 public class CheckerFragment extends Fragment {
     public static final int LAYOUT = R.layout.checker_fragment;
     private View view;
+    private int percentPassCodes;
 
     /**
      * Get instance of CheckerFragment
@@ -38,7 +40,17 @@ public class CheckerFragment extends Fragment {
         initTvCurrentCode();
         initTvPercentCovered();
         initTvTestedOut();
+        initProgressBars();
         return view;
+    }
+
+    private void initProgressBars() {
+        ProgressBar pbPercent = (ProgressBar) view.findViewById(R.id.progressBarPercent);
+        ProgressBar pbPassedCodes = (ProgressBar) view.findViewById(R.id.progressBarTestedOut);
+
+        percentPassCodes = (int) CodeChecker.getPercentPassCodes();
+        pbPercent.setProgress(percentPassCodes);
+
     }
 
     /**

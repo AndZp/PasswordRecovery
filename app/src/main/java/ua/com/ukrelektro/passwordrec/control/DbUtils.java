@@ -1,4 +1,4 @@
-package ua.com.ukrelektro.passwordrec.db;
+package ua.com.ukrelektro.passwordrec.control;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import ua.com.ukrelektro.passwordrec.model.Code;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
+import ua.com.ukrelektro.passwordrec.ui.activity.MainActivity;
 
 public class DbUtils {
 
@@ -21,7 +22,7 @@ public class DbUtils {
     public static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) {
 
 
-        ArrayList<Code> resultList = new ArrayList();
+        ArrayList resultList = new ArrayList();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         int sumOfCodes = 0;
@@ -52,5 +53,14 @@ public class DbUtils {
         Singleton.getInstance().setSumCount(sumOfCounts);
         Singleton.getInstance().setSumCode(sumOfCodes);
         return resultList;
+    }
+
+    /**
+     * DataBase initialization
+     *
+     * @param context Application context
+     */
+    public static DatabaseHelper getDbHelper(MainActivity context) {
+        return DatabaseHelper.getInstance(context);
     }
 }

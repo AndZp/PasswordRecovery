@@ -1,7 +1,12 @@
-package ua.com.ukrelektro.passwordrec.model;
+package ua.com.ukrelektro.passwordrec.control;
 
 
 import java.util.ArrayList;
+import java.util.Date;
+
+import ua.com.ukrelektro.passwordrec.model.Code;
+import ua.com.ukrelektro.passwordrec.model.Singleton;
+import ua.com.ukrelektro.passwordrec.model.Status;
 
 public class CodeChecker {
 
@@ -12,7 +17,9 @@ public class CodeChecker {
 
     public static void checkCode(Status result) {
         codesList.get(currentCountNumber).setStatus(result);
+        codesList.get(currentCountNumber).setDate(new Date());
         sumPassCount += getCurrentCode().getCount();
+        Singleton.getInstance().setSumPassCount(sumPassCount);
         currentCountNumber++;
 
     }
@@ -27,6 +34,17 @@ public class CodeChecker {
 
     public static int getCurrentCountNumber() {
         return currentCountNumber;
+    }
+
+    public static ArrayList<Code> getHistoryList() {
+        ArrayList<Code> historyList = new ArrayList<>();
+        for (int i = 0; i < Singleton.getInstance().getCodesList().size(); i++) {
+            Code code = Singleton.getInstance().getCodesList().get(i);
+            if (code.getStatus() != Status.NOT_CHECK) {
+                historyList.add(code);
+            }
+        }
+        return historyList;
     }
 
 }
