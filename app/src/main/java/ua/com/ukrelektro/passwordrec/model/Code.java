@@ -1,9 +1,13 @@
 package ua.com.ukrelektro.passwordrec.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class Code {
+    @SerializedName("Code")
     private int code;
+    @SerializedName("Count")
     private int count;
     private Status status;
     private Date date;

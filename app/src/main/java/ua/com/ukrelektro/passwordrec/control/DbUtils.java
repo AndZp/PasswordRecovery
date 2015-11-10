@@ -19,10 +19,10 @@ public class DbUtils {
      * @param inputStream intputStream of CSV file
      * @return ArrayList of Code object from CSV file
      */
-    public static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) {
+    public static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) throws RuntimeException {
 
 
-        ArrayList resultList = new ArrayList();
+        ArrayList<Code> resultList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         int sumOfCodes = 0;
@@ -62,5 +62,8 @@ public class DbUtils {
      */
     public static DatabaseHelper getDbHelper(MainActivity context) {
         return DatabaseHelper.getInstance(context);
+    }
+
+    public static void updateCodes(ArrayList<Code> updateList) {
     }
 }

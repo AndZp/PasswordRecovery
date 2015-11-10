@@ -1,5 +1,8 @@
 package ua.com.ukrelektro.passwordrec.ui.activity;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +17,7 @@ import android.view.View;
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.control.DbUtils;
+import ua.com.ukrelektro.passwordrec.control.DownloadUpdateTask;
 import ua.com.ukrelektro.passwordrec.model.Status;
 import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int LAYOUT = R.layout.activity_main;
 
     private ViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +58,8 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -70,8 +70,12 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (checkInternetConnection()) {
+                    new DownloadUpdateTask(MainActivity.this).execute();
+                } else {
+                    Snackbar.make(view, "Internet connection error", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
     }
@@ -121,4 +125,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean checkInternetConnection() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
+    }
 }
+
+
