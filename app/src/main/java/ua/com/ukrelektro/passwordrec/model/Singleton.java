@@ -2,6 +2,8 @@ package ua.com.ukrelektro.passwordrec.model;
 
 import java.util.ArrayList;
 
+import ua.com.ukrelektro.passwordrec.control.DatabaseHelper;
+
 public class Singleton {
 
 
@@ -9,6 +11,7 @@ public class Singleton {
     private int currentCountNumber = 0;
     private int sumCount = 0;
     private int sumCode = 0;
+    private DatabaseHelper databaseHelper;
 
 
     private int sumPassCount;
@@ -65,4 +68,11 @@ public class Singleton {
         this.sumPassCount = sumPassCount;
     }
 
+    public DatabaseHelper getDatabaseHelper() {
+        return databaseHelper;
+    }
+
+    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
+    }
 }

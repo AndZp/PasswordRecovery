@@ -33,6 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private Context context;
     private ArrayList<Code> codesList;
 
+
     public static DatabaseHelper getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new DatabaseHelper(context.getApplicationContext());
@@ -70,6 +71,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    public void updateDB(ArrayList<Code> updateList) {
+        ContentValues values;
+        for (int i = 0; i < updateList.size(); i++) {
+            values = new ContentValues();
+            Code code = updateList.get(i);
+
+            values.put(COUNT_COLUMN, code.getCount());
+            getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
+        }
 
     }
 }

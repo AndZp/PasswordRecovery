@@ -65,5 +65,6 @@ public class DbUtils {
     }
 
     public static void updateCodes(ArrayList<Code> updateList) {
+        Singleton.getInstance().getDatabaseHelper().updateDB(updateList);
     }
 }

@@ -18,6 +18,7 @@ import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.control.DbUtils;
 import ua.com.ukrelektro.passwordrec.control.DownloadUpdateTask;
+import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
 import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
 
-        DbUtils.getDbHelper(this);
+        Singleton.getInstance().setDatabaseHelper(DbUtils.getDbHelper(this));
         initToolbar();
         initTabLayout();
         initActionButton();
