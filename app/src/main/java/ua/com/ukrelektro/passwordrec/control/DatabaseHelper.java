@@ -21,11 +21,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     public static final String CODE_COLUMN = "code";
     public static final String COUNT_COLUMN = "count";
+    public static final String STATUS_COLUMN = "status";
 
     private static final String DATABASE_CREATE_SCRIPT = "create table "
             + DATABASE_TABLE + " (" + BaseColumns._ID
             + " integer primary key autoincrement, " + CODE_COLUMN
-            + " integer, " + COUNT_COLUMN + " integer);";
+            + " integer, " + COUNT_COLUMN + " integer, " + STATUS_COLUMN
+            + " TEXT not null);";
 
     public static final int PASSCODES_FILE = R.raw.passcode;
 
@@ -37,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public static DatabaseHelper getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new DatabaseHelper(context.getApplicationContext());
+            mInstance.getWritableDatabase();
         }
         return mInstance;
     }
@@ -45,6 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         this.codesList = DbUtils.getListCodesFromCSV(getInputStreamFromCSVFile());
+
     }
 
 
@@ -61,6 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             values = new ContentValues();
             values.put(CODE_COLUMN, codesList.get(i).getCode());
             values.put(COUNT_COLUMN, codesList.get(i).getCount());
+            values.put(STATUS_COLUMN, codesList.get(i).getStatus().toString());
             db.insert(DATABASE_TABLE, COUNT_COLUMN, values);
         }
     }
