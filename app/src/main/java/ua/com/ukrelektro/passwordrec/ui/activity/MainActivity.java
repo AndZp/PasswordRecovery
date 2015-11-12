@@ -1,6 +1,8 @@
 package ua.com.ukrelektro.passwordrec.ui.activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,7 +18,7 @@ import android.view.View;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
-import ua.com.ukrelektro.passwordrec.control.DbUtils;
+import ua.com.ukrelektro.passwordrec.control.DatabaseHelper;
 import ua.com.ukrelektro.passwordrec.control.DownloadUpdateTask;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
@@ -26,24 +28,59 @@ import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
  * Main Activity Java Class
  */
 public class MainActivity extends AppCompatActivity {
+    public static final String APP_PREFERENCES = "mysettings";
 
+    final String CURRENT_COUNT_NUMBER = "CURRENT_COUNT_NUMBER";
+    final String SUM_PASSED_COUNT = "SUM_PASSED_COUNT";
 
     private static final int LAYOUT = R.layout.activity_main;
 
     private ViewPager mViewPager;
+    private SQLiteDatabase sqLiteDatabase;
+    DatabaseHelper databaseHelper;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
+        LoadPreferences();
 
-        Singleton.getInstance().setDatabaseHelper(DbUtils.getDbHelper(this));
+        databaseHelper = DatabaseHelper.getInstance(this);
+
+        sqLiteDatabase = databaseHelper.getReadableDatabase();
+        databaseHelper.initAllcodesfromDb(sqLiteDatabase);
+
+
         initToolbar();
         initTabLayout();
         initActionButton();
 
 
+    }
+
+    private void SavePreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(CURRENT_COUNT_NUMBER, Singleton.getInstance().getCurrentCountNumber());
+        editor.putInt(SUM_PASSED_COUNT, Singleton.getInstance().getSumPassCount());
+        editor.apply();
+    }
+
+    private void LoadPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        Singleton.getInstance().setCurrentCountNumber(sharedPreferences.getInt(CURRENT_COUNT_NUMBER, 0));
+        Singleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
+
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DatabaseHelper.getInstance(this).updateStatusInDataBase(CodeChecker.getHistoryList());
+        SavePreferences();
     }
 
     @Override
@@ -127,8 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkInternetConnection() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }

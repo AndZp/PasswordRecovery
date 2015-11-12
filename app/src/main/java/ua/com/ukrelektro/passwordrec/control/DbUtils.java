@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import ua.com.ukrelektro.passwordrec.model.Code;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
-import ua.com.ukrelektro.passwordrec.ui.activity.MainActivity;
 
 public class DbUtils {
 
@@ -55,16 +54,5 @@ public class DbUtils {
         return resultList;
     }
 
-    /**
-     * DataBase initialization
-     *
-     * @param context Application context
-     */
-    public static DatabaseHelper getDbHelper(MainActivity context) {
-        return DatabaseHelper.getInstance(context);
-    }
 
-    public static void updateCodes(ArrayList<Code> updateList) {
-        Singleton.getInstance().getDatabaseHelper().updateDB(updateList);
-    }
 }

@@ -56,4 +56,13 @@ public class Code {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if ((other == null) || (getClass() != other.getClass()))
+            return false;
+
+        return this.code == ((Code) other).code;
+    }
 }

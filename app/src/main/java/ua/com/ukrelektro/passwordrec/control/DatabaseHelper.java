@@ -2,15 +2,20 @@ package ua.com.ukrelektro.passwordrec.control;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.model.Code;
+import ua.com.ukrelektro.passwordrec.model.Singleton;
+import ua.com.ukrelektro.passwordrec.model.Status;
 
 public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static DatabaseHelper mInstance;
@@ -19,27 +24,30 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_TABLE = "codes";
 
-    public static final String CODE_COLUMN = "code";
-    public static final String COUNT_COLUMN = "count";
-    public static final String STATUS_COLUMN = "status";
+    private static final String CODE_COLUMN = "code";
+    private static final String COUNT_COLUMN = "count";
+    private static final String STATUS_COLUMN = "status";
+    private static final String DATE_COLUMN = "date";
 
     private static final String DATABASE_CREATE_SCRIPT = "create table "
             + DATABASE_TABLE + " (" + BaseColumns._ID
             + " integer primary key autoincrement, " + CODE_COLUMN
             + " integer, " + COUNT_COLUMN + " integer, " + STATUS_COLUMN
-            + " TEXT not null);";
+            + " TEXT not null, " + DATE_COLUMN + " TEXT);";
 
     public static final int PASSCODES_FILE = R.raw.passcode;
 
 
     private Context context;
-    private ArrayList<Code> codesList;
+    private ArrayList<Code> codesFromCSV;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private String dateString;
 
 
     public static DatabaseHelper getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new DatabaseHelper(context.getApplicationContext());
-            mInstance.getWritableDatabase();
+
         }
         return mInstance;
     }
@@ -47,7 +55,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
-        this.codesList = DbUtils.getListCodesFromCSV(getInputStreamFromCSVFile());
 
     }
 
@@ -55,23 +62,24 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE_SCRIPT);
-        initDb(db);
+        codesFromCSV = DbUtils.getListCodesFromCSV(context.getResources().openRawResource(PASSCODES_FILE));
+        addListCodesToDataBase(codesFromCSV, db);
+        initAllcodesfromDb(db);
     }
 
-    private void initDb(SQLiteDatabase db) {
+    private void addListCodesToDataBase(ArrayList<Code> codesList, SQLiteDatabase db) {
 
         ContentValues values;
         for (int i = 0; i < codesList.size(); i++) {
             values = new ContentValues();
-            values.put(CODE_COLUMN, codesList.get(i).getCode());
-            values.put(COUNT_COLUMN, codesList.get(i).getCount());
-            values.put(STATUS_COLUMN, codesList.get(i).getStatus().toString());
+            Code code = codesList.get(i);
+            values.put(CODE_COLUMN, code.getCode());
+            values.put(COUNT_COLUMN, code.getCount());
+            values.put(STATUS_COLUMN, code.getStatus().toString());
+            if (code.getDate() != null)
+                values.put(DATE_COLUMN, dateFormat.format(code.getDate()));
             db.insert(DATABASE_TABLE, COUNT_COLUMN, values);
         }
-    }
-
-    public InputStream getInputStreamFromCSVFile() {
-        return context.getResources().openRawResource(PASSCODES_FILE);
     }
 
     @Override
@@ -80,6 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     }
 
     public void updateDB(ArrayList<Code> updateList) {
+
         ContentValues values;
         for (int i = 0; i < updateList.size(); i++) {
             values = new ContentValues();
@@ -88,6 +97,57 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             values.put(COUNT_COLUMN, code.getCount());
             getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
         }
-
     }
+
+    public void initAllcodesfromDb(SQLiteDatabase db) {
+        ArrayList<Code> codeList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+
+        int sumOfCount = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                int code = cursor.getInt(1);
+                int count = cursor.getInt(2);
+
+                Status status = Status.valueOf(cursor.getString(3));
+                Code codeObj = new Code(code, count, status);
+
+                // Date parse. If Data != null, add Data to Code Object
+                Date date = null;
+                dateString = cursor.getString(4);
+                if (dateString != null) {
+                    try {
+                        date = dateFormat.parse(dateString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    codeObj.setDate(date);
+                }
+                codeList.add(codeObj);
+
+                sumOfCount += count;
+
+            } while (cursor.moveToNext());
+        }
+
+        Singleton.getInstance().setSumCount(sumOfCount);
+        Singleton.getInstance().setCodesList(codeList);
+    }
+
+    public void updateStatusInDataBase(ArrayList<Code> updateList) {
+        ContentValues values;
+        for (int i = 0; i < updateList.size(); i++) {
+            Code code = updateList.get(i);
+            values = new ContentValues();
+
+            values.put(STATUS_COLUMN, code.getStatus().toString());
+            values.put(DATE_COLUMN, dateFormat.format(code.getDate()));
+            getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
+        }
+    }
+
+
 }

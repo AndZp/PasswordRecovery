@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ua.com.ukrelektro.passwordrec.model.Code;
+import ua.com.ukrelektro.passwordrec.model.MyApplication;
 import ua.com.ukrelektro.passwordrec.ui.activity.MainActivity;
 
 
@@ -27,6 +28,7 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
     public static final String UPDATE_URL = "https://s3.amazonaws.com/passwordapp/updates.json";
     private MainActivity mainActivity;
     private ProgressDialog progressDialog;
+
 
     public DownloadUpdateTask(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -49,9 +51,14 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
         try {
 
             HttpURLConnection conn = getHttpURLConnection(UPDATE_URL);
+
             inputStream = conn.getInputStream();
+
             ArrayList<Code> updateList = getCodeListFromJson(inputStream);
-            DbUtils.updateCodes(updateList);
+
+            margeUpdateListWithHistoryList(updateList);
+
+            DatabaseHelper.getInstance(MyApplication.getAppContext()).updateDB(updateList);
 
             return "Update complete";
         } catch (IOException e) {
@@ -63,6 +70,20 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private void margeUpdateListWithHistoryList(ArrayList<Code> updateList) {
+        ArrayList<Code> historyList = CodeChecker.getHistoryList();
+
+        for (int i = 0; i < updateList.size(); i++) {
+            Code codeFromUpdate = updateList.get(i);
+
+            if (historyList.contains(codeFromUpdate)) {
+                Code codeFromHistory = historyList.get(historyList.indexOf(codeFromUpdate));
+                updateList.get(i).setStatus(codeFromHistory.getStatus());
+                updateList.get(i).setDate(codeFromHistory.getDate());
             }
         }
     }

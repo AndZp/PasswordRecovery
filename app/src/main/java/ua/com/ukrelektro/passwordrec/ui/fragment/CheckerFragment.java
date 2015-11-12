@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
+import ua.com.ukrelektro.passwordrec.model.Singleton;
 
 /**
  * Fragment with CodeChecker
@@ -76,7 +77,7 @@ public class CheckerFragment extends Fragment {
      */
     private void initTvTestedOut() {
         TextView tvTestedOut = (TextView) view.findViewById(R.id.tvTestedOut);
-        String testedOut = String.valueOf(CodeChecker.getCurrentCountNumber());
+        String testedOut = String.valueOf(Singleton.getInstance().getCurrentCountNumber());
         tvTestedOut.setText(testedOut + " Tested out of 9,999");
     }
 
