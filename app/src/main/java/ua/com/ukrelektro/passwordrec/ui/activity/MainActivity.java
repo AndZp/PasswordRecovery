@@ -2,7 +2,6 @@ package ua.com.ukrelektro.passwordrec.ui.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -44,18 +43,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(LAYOUT);
         LoadPreferences();
 
-        initDataBase();
+        DatabaseHelper.initDataBase();
         initToolbar();
         initTabLayout();
         initActionButton();
 
 
-    }
-
-    private void initDataBase() {
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance();
-        SQLiteDatabase sqLiteDatabase = databaseHelper.getReadableDatabase();
-        databaseHelper.initAllCodesfromDb(sqLiteDatabase);
     }
 
     @Override

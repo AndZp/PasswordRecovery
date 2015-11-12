@@ -72,10 +72,16 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         initAllCodesfromDb(db);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+
+    public static void initDataBase() {
+        DatabaseHelper databaseHelper = getInstance();
+        SQLiteDatabase sqLiteDatabase = databaseHelper.getReadableDatabase();
+        databaseHelper.initAllCodesfromDb(sqLiteDatabase);
     }
 
     /**
@@ -147,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         }
     }
 
-    public void initAllCodesfromDb(SQLiteDatabase db) {
+    private void initAllCodesfromDb(SQLiteDatabase db) {
         ArrayList<Code> codeList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DATABASE_TABLE;
         Cursor cursor = db.rawQuery(selectQuery, null);
