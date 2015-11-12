@@ -6,7 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +19,7 @@ import java.util.Date;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.model.Code;
+import ua.com.ukrelektro.passwordrec.model.MyApplication;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
 import ua.com.ukrelektro.passwordrec.model.Status;
 
@@ -44,27 +50,74 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private String dateString;
 
 
-    public static DatabaseHelper getInstance(Context context) {
+    public static DatabaseHelper getInstance() {
         if (mInstance == null) {
-            mInstance = new DatabaseHelper(context.getApplicationContext());
+            mInstance = new DatabaseHelper(MyApplication.getAppContext());
 
         }
         return mInstance;
     }
 
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
 
     }
 
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE_SCRIPT);
-        codesFromCSV = DbUtils.getListCodesFromCSV(context.getResources().openRawResource(PASSCODES_FILE));
+        codesFromCSV = getListCodesFromCSV(context.getResources().openRawResource(PASSCODES_FILE));
         addListCodesToDataBase(codesFromCSV, db);
-        initAllcodesfromDb(db);
+        initAllCodesfromDb(db);
+    }
+
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    /**
+     * Parse CSV file to List and add data to Singleton
+     *
+     * @param inputStream intputStream of CSV file
+     * @return ArrayList of Code object from CSV file
+     */
+    private static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) {
+
+
+        ArrayList<Code> resultList = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        int sumOfCodes = 0;
+        int sumOfCounts = 0;
+
+        try {
+            String csvLine;
+            while ((csvLine = reader.readLine()) != null) {
+                String[] row = csvLine.split(",");
+
+                int code = Integer.parseInt(row[0]);
+                sumOfCodes++;
+
+                int count = Integer.parseInt(row[1]);
+                sumOfCounts += count;
+                resultList.add(new Code(code, count, Status.NOT_CHECK));
+            }
+        } catch (IOException ex) {
+            Log.e("Error in reading CSV", ex.getMessage());
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Log.e("Error while closing IS", e.getMessage());
+            }
+        }
+        Singleton.getInstance().setCodesList(resultList);
+        Singleton.getInstance().setSumCount(sumOfCounts);
+        Singleton.getInstance().setSumCode(sumOfCodes);
+        return resultList;
     }
 
     private void addListCodesToDataBase(ArrayList<Code> codesList, SQLiteDatabase db) {
@@ -82,12 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         }
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
-
-    public void updateDB(ArrayList<Code> updateList) {
+    public void updateCodesInDataBase(ArrayList<Code> updateList) {
 
         ContentValues values;
         for (int i = 0; i < updateList.size(); i++) {
@@ -99,7 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         }
     }
 
-    public void initAllcodesfromDb(SQLiteDatabase db) {
+    public void initAllCodesfromDb(SQLiteDatabase db) {
         ArrayList<Code> codeList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DATABASE_TABLE;
         Cursor cursor = db.rawQuery(selectQuery, null);

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ua.com.ukrelektro.passwordrec.model.Code;
-import ua.com.ukrelektro.passwordrec.model.MyApplication;
 import ua.com.ukrelektro.passwordrec.ui.activity.MainActivity;
 
 
@@ -58,7 +57,7 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
 
             margeUpdateListWithHistoryList(updateList);
 
-            DatabaseHelper.getInstance(MyApplication.getAppContext()).updateDB(updateList);
+            DatabaseHelper.getInstance().updateCodesInDataBase(updateList);
 
             return "Update complete";
         } catch (IOException e) {

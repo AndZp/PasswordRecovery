@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int LAYOUT = R.layout.activity_main;
 
     private ViewPager mViewPager;
-    private SQLiteDatabase sqLiteDatabase;
-    DatabaseHelper databaseHelper;
-
 
 
     @Override
@@ -47,12 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(LAYOUT);
         LoadPreferences();
 
-        databaseHelper = DatabaseHelper.getInstance(this);
-
-        sqLiteDatabase = databaseHelper.getReadableDatabase();
-        databaseHelper.initAllcodesfromDb(sqLiteDatabase);
-
-
+        initDataBase();
         initToolbar();
         initTabLayout();
         initActionButton();
@@ -60,29 +52,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void SavePreferences() {
-        SharedPreferences sharedPreferences = getSharedPreferences(
-                APP_PREFERENCES, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(CURRENT_COUNT_NUMBER, Singleton.getInstance().getCurrentCountNumber());
-        editor.putInt(SUM_PASSED_COUNT, Singleton.getInstance().getSumPassCount());
-        editor.apply();
+    private void initDataBase() {
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance();
+        SQLiteDatabase sqLiteDatabase = databaseHelper.getReadableDatabase();
+        databaseHelper.initAllCodesfromDb(sqLiteDatabase);
     }
 
-    private void LoadPreferences() {
-        SharedPreferences sharedPreferences = getSharedPreferences(
-                APP_PREFERENCES, MODE_PRIVATE);
-        Singleton.getInstance().setCurrentCountNumber(sharedPreferences.getInt(CURRENT_COUNT_NUMBER, 0));
-        Singleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
-
-    }
     @Override
     protected void onStop() {
         super.onStop();
-        DatabaseHelper.getInstance(this).updateStatusInDataBase(CodeChecker.getHistoryList());
+        DatabaseHelper.getInstance().updateStatusInDataBase(CodeChecker.getHistoryList());
         SavePreferences();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -167,6 +148,23 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+    private void SavePreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(CURRENT_COUNT_NUMBER, Singleton.getInstance().getCurrentCountNumber());
+        editor.putInt(SUM_PASSED_COUNT, Singleton.getInstance().getSumPassCount());
+        editor.apply();
+    }
+
+    private void LoadPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        Singleton.getInstance().setCurrentCountNumber(sharedPreferences.getInt(CURRENT_COUNT_NUMBER, 0));
+        Singleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
+
     }
 }
 
