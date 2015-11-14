@@ -14,13 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.control.DatabaseHelper;
 import ua.com.ukrelektro.passwordrec.control.DownloadUpdateTask;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
-import ua.com.ukrelektro.passwordrec.model.Status;
+import ua.com.ukrelektro.passwordrec.model.State;
 import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
 
 /**
@@ -54,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        DatabaseHelper.getInstance().updateStatusInDataBase(CodeChecker.getHistoryList());
         SavePreferences();
+        DatabaseHelper.getInstance().updateStatusInDataBase(Singleton.getInstance().getCodesList());
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,13 +68,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
+        switch (id) {
+            case R.id.update:
+                if (checkInternetConnection()) {
+                    new DownloadUpdateTask(MainActivity.this).execute();
+                } else {
+                    Toast.makeText(this, "Internet connection error", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            case R.id.restart:
+                CodeChecker.restartCount();
+                initTabLayout();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
 
     /**
      * onClick handler for FloatingActionButton
@@ -125,11 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
         switch (view.getId()) {
             case R.id.btnNext:
-                CodeChecker.checkCode(Status.FAIL);
+                CodeChecker.checkCode(State.FAIL);
                 initTabLayout();
                 break;
             case R.id.btnWorked:
-                CodeChecker.checkCode(Status.PASS);
+                CodeChecker.checkCode(State.PASS);
                 initTabLayout();
                 break;
             default:
@@ -159,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
         Singleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
 
     }
+
+
 }
 
 

@@ -10,6 +10,7 @@ import ua.com.ukrelektro.passwordrec.ui.fragment.HistoryFragment;
 public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     private String[] tabsArr;
 
+
     public TabsPagerFragmentAdapter(FragmentManager fm) {
         super(fm);
         getTabs();
@@ -27,6 +28,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
                 return CheckerFragment.getInstance();
             case 1:
                 return HistoryFragment.getInstanse();
+
         }
         return null;
     }
@@ -35,6 +37,7 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return tabsArr.length;
     }
+
 
     private void getTabs() {
         tabsArr = new String[]{"Checker", "History"};

@@ -13,7 +13,7 @@ import java.util.List;
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.model.Code;
-import ua.com.ukrelektro.passwordrec.model.Status;
+import ua.com.ukrelektro.passwordrec.model.State;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.time.setText("Tested on " + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(code.getDate()));
 
-        int icon = code.getStatus() == Status.PASS ? R.drawable.ic_check_circle : R.drawable.ic_highlight_remove;
+        int icon = code.getStatus() == State.PASS ? R.drawable.ic_check_circle : R.drawable.ic_highlight_remove;
         holder.icon.setImageResource(icon);
     }
 

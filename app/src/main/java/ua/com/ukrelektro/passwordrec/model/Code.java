@@ -9,7 +9,7 @@ public class Code {
     private int code;
     @SerializedName("Count")
     private int count;
-    private Status status;
+    private State status;
     private Date date;
 
     /**
@@ -19,7 +19,7 @@ public class Code {
      * @param count  int count
      * @param status current status of check
      */
-    public Code(int code, int count, Status status) {
+    public Code(int code, int count, State status) {
         this.code = code;
         this.count = count;
         this.status = status;
@@ -41,11 +41,11 @@ public class Code {
         this.count = count;
     }
 
-    public Status getStatus() {
+    public State getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(State status) {
         this.status = status;
     }
 

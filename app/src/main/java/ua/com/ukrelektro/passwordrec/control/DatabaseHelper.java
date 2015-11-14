@@ -21,7 +21,7 @@ import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.model.Code;
 import ua.com.ukrelektro.passwordrec.model.MyApplication;
 import ua.com.ukrelektro.passwordrec.model.Singleton;
-import ua.com.ukrelektro.passwordrec.model.Status;
+import ua.com.ukrelektro.passwordrec.model.State;
 
 public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static DatabaseHelper mInstance;
@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
                 int count = Integer.parseInt(row[1]);
                 sumOfCounts += count;
-                resultList.add(new Code(code, count, Status.NOT_CHECK));
+                resultList.add(new Code(code, count, State.NOT_CHECK));
             }
         } catch (IOException ex) {
             Log.e("Error in reading CSV", ex.getMessage());
@@ -166,7 +166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
                 int code = cursor.getInt(1);
                 int count = cursor.getInt(2);
 
-                Status status = Status.valueOf(cursor.getString(3));
+                State status = State.valueOf(cursor.getString(3));
                 Code codeObj = new Code(code, count, status);
 
                 // Date parse. If Data != null, add Data to Code Object
@@ -195,10 +195,16 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         ContentValues values;
         for (int i = 0; i < updateList.size(); i++) {
             Code code = updateList.get(i);
+
             values = new ContentValues();
 
             values.put(STATUS_COLUMN, code.getStatus().toString());
-            values.put(DATE_COLUMN, dateFormat.format(code.getDate()));
+
+            if (code.getDate() != null) {
+                values.put(DATE_COLUMN, dateFormat.format(code.getDate()));
+            } else {
+                values.put(DATE_COLUMN, (byte[]) null);
+            }
             getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
         }
     }
