@@ -1,6 +1,7 @@
 package ua.com.ukrelektro.passwordrec.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,7 +20,7 @@ import ua.com.ukrelektro.passwordrec.model.Singleton;
 public class CheckerFragment extends Fragment {
     public static final int LAYOUT = R.layout.checker_fragment;
     private View view;
-    private int percentPassCodes;
+
 
     /**
      * Get instance of CheckerFragment
@@ -46,11 +47,17 @@ public class CheckerFragment extends Fragment {
     }
 
     private void initProgressBars() {
-        ProgressBar pbPercent = (ProgressBar) view.findViewById(R.id.progressBarPercent);
-        ProgressBar pbPassedCodes = (ProgressBar) view.findViewById(R.id.progressBarTestedOut);
+        final ProgressBar pbPercent = (ProgressBar) view.findViewById(R.id.progressBarPercent);
+        final ProgressBar pbPassedCodes = (ProgressBar) view.findViewById(R.id.progressBarTestedOut);
 
-        percentPassCodes = (int) CodeChecker.getPercentPassCodes();
-        pbPercent.setProgress(percentPassCodes);
+        Handler progressBarHandler = new Handler();
+        progressBarHandler.post(new Runnable() {
+
+            public void run() {
+                pbPassedCodes.setProgress(Singleton.getInstance().getCurrentCountNumber());
+                pbPercent.setProgress((int) CodeChecker.getPercentPassCodes());
+            }
+        });
 
     }
 
@@ -70,6 +77,7 @@ public class CheckerFragment extends Fragment {
         TextView tvPercentCovered = (TextView) view.findViewById(R.id.tvPercentCovered);
         String result = String.format("%.1f", CodeChecker.getPercentPassCodes());
         tvPercentCovered.setText(result + " Percent covered");
+
     }
 
     /**

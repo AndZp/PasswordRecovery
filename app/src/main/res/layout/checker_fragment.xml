@@ -29,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Worked"
+        android:background="@color/colorPrimary"
         android:id="@+id/btnWorked"
         android:layout_below="@+id/tvCurrentCode"
         android:layout_toLeftOf="@+id/tvCurrentCode"
@@ -39,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
+        android:background="@color/colorAccent"
         android:id="@+id/btnNext"
         android:layout_alignTop="@+id/btnWorked"
         android:layout_toRightOf="@+id/tvCurrentCode"
@@ -62,7 +64,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBarPercent"
         android:max="100"
-        android:progress="50"
+
         android:indeterminate="false"
 
         android:layout_below="@+id/tvProgress"
@@ -87,7 +89,6 @@
         android:id="@+id/progressBarTestedOut"
         android:indeterminate="false"
         android:max="9999"
-        android:progress="0"
         android:layout_below="@+id/tvPercentCovered"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
