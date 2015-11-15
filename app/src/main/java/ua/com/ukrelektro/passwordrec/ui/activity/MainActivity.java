@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +18,7 @@ import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.control.DatabaseHelper;
 import ua.com.ukrelektro.passwordrec.control.DownloadUpdateTask;
-import ua.com.ukrelektro.passwordrec.model.Singleton;
+import ua.com.ukrelektro.passwordrec.model.CodesSingleton;
 import ua.com.ukrelektro.passwordrec.model.State;
 import ua.com.ukrelektro.passwordrec.ui.adapter.TabsPagerFragmentAdapter;
 
@@ -47,18 +45,16 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper.initDataBase();
         initToolbar();
         initTabLayout();
-        initActionButton();
-
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         SavePreferences();
-        DatabaseHelper.getInstance().updateStatusInDataBase(Singleton.getInstance().getCodesList());
+        DatabaseHelper.getInstance().updateStatusInDataBase(CodesSingleton.getInstance().getCodesList());
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -86,25 +82,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-
-    /**
-     * onClick handler for FloatingActionButton
-     */
-    private void initActionButton() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (checkInternetConnection()) {
-                    new DownloadUpdateTask(MainActivity.this).execute();
-                } else {
-                    Snackbar.make(view, "Internet connection error", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-        });
     }
 
     /**
@@ -162,16 +139,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(CURRENT_COUNT_NUMBER, Singleton.getInstance().getCurrentCountNumber());
-        editor.putInt(SUM_PASSED_COUNT, Singleton.getInstance().getSumPassCount());
+        editor.putInt(CURRENT_COUNT_NUMBER, CodesSingleton.getInstance().getCurrentCountNumber());
+        editor.putInt(SUM_PASSED_COUNT, CodesSingleton.getInstance().getSumPassCount());
         editor.apply();
     }
 
     private void LoadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
-        Singleton.getInstance().setCurrentCountNumber(sharedPreferences.getInt(CURRENT_COUNT_NUMBER, 0));
-        Singleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
+        CodesSingleton.getInstance().setCurrentCountNumber(sharedPreferences.getInt(CURRENT_COUNT_NUMBER, 0));
+        CodesSingleton.getInstance().setSumPassCount(sharedPreferences.getInt(SUM_PASSED_COUNT, 0));
 
     }
 

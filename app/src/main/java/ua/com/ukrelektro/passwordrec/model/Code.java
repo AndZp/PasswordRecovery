@@ -7,8 +7,10 @@ import java.util.Date;
 public class Code {
     @SerializedName("Code")
     private int code;
+
     @SerializedName("Count")
     private int count;
+
     private State status;
     private Date date;
 

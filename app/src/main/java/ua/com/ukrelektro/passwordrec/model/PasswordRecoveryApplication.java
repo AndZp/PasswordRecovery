@@ -6,15 +6,15 @@ import android.content.Context;
 /**
  * Created by User on 11.11.2015.
  */
-public class MyApplication extends Application {
+public class PasswordRecoveryApplication extends Application {
     private static Context context;
 
     public void onCreate() {
         super.onCreate();
-        MyApplication.context = getApplicationContext();
+        PasswordRecoveryApplication.context = getApplicationContext();
     }
 
     public static Context getAppContext() {
-        return MyApplication.context;
+        return PasswordRecoveryApplication.context;
     }
 }

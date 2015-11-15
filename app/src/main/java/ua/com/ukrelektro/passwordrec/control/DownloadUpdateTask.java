@@ -21,7 +21,9 @@ import java.util.Arrays;
 import ua.com.ukrelektro.passwordrec.model.Code;
 import ua.com.ukrelektro.passwordrec.ui.activity.MainActivity;
 
-
+/**
+ * AsyncTask for updating list of codes in CodesSingleton and in DataBase
+ */
 public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
 
     public static final String UPDATE_URL = "https://s3.amazonaws.com/passwordapp/updates.json";
@@ -79,6 +81,7 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
         for (int i = 0; i < updateList.size(); i++) {
             Code codeFromUpdate = updateList.get(i);
 
+            // if historyList contain code, who was checked, set actual data and status in updateList
             if (historyList.contains(codeFromUpdate)) {
                 Code codeFromHistory = historyList.get(historyList.indexOf(codeFromUpdate));
                 updateList.get(i).setStatus(codeFromHistory.getStatus());
@@ -95,6 +98,13 @@ public class DownloadUpdateTask extends AsyncTask<Void, Void, String> {
 
     }
 
+    /**
+     * Parsing Json with GSON lib.
+     *
+     * @param inputStream inputStream from JSON file
+     * @return list of Codes
+     * @throws UnsupportedEncodingException
+     */
     private static ArrayList<Code> getCodeListFromJson(InputStream inputStream) throws UnsupportedEncodingException {
 
         BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));

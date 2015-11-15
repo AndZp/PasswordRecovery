@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.control.CodeChecker;
-import ua.com.ukrelektro.passwordrec.model.Singleton;
+import ua.com.ukrelektro.passwordrec.model.CodesSingleton;
 
 /**
  * Fragment with CodeChecker
@@ -54,7 +54,7 @@ public class CheckerFragment extends Fragment {
         progressBarHandler.post(new Runnable() {
 
             public void run() {
-                pbPassedCodes.setProgress(Singleton.getInstance().getCurrentCountNumber());
+                pbPassedCodes.setProgress(CodesSingleton.getInstance().getCurrentCountNumber());
                 pbPercent.setProgress((int) CodeChecker.getPercentPassCodes());
             }
         });
@@ -85,7 +85,7 @@ public class CheckerFragment extends Fragment {
      */
     private void initTvTestedOut() {
         TextView tvTestedOut = (TextView) view.findViewById(R.id.tvTestedOut);
-        String testedOut = String.valueOf(Singleton.getInstance().getCurrentCountNumber());
+        String testedOut = String.valueOf(CodesSingleton.getInstance().getCurrentCountNumber());
         tvTestedOut.setText(testedOut + " Tested out of 9,999");
     }
 

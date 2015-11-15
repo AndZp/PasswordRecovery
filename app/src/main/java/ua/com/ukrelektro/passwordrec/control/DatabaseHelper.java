@@ -19,8 +19,8 @@ import java.util.Date;
 
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.model.Code;
-import ua.com.ukrelektro.passwordrec.model.MyApplication;
-import ua.com.ukrelektro.passwordrec.model.Singleton;
+import ua.com.ukrelektro.passwordrec.model.CodesSingleton;
+import ua.com.ukrelektro.passwordrec.model.PasswordRecoveryApplication;
 import ua.com.ukrelektro.passwordrec.model.State;
 
 public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     private static final String DATABASE_NAME = "codesdb.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_TABLE = "codes";
+    private static final String TABLE_NAME = "codes";
 
     private static final String CODE_COLUMN = "code";
     private static final String COUNT_COLUMN = "count";
@@ -36,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     private static final String DATE_COLUMN = "date";
 
     private static final String DATABASE_CREATE_SCRIPT = "create table "
-            + DATABASE_TABLE + " (" + BaseColumns._ID
+            + TABLE_NAME + " (" + BaseColumns._ID
             + " integer primary key autoincrement, " + CODE_COLUMN
             + " integer, " + COUNT_COLUMN + " integer, " + STATUS_COLUMN
             + " TEXT not null, " + DATE_COLUMN + " TEXT);";
@@ -52,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
 
     public static DatabaseHelper getInstance() {
         if (mInstance == null) {
-            mInstance = new DatabaseHelper(MyApplication.getAppContext());
+            mInstance = new DatabaseHelper(PasswordRecoveryApplication.getAppContext());
 
         }
         return mInstance;
@@ -68,26 +68,29 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE_SCRIPT);
         codesFromCSV = getListCodesFromCSV(context.getResources().openRawResource(PASSCODES_FILE));
-        addListCodesToDataBase(codesFromCSV, db);
-        initAllCodesfromDb(db);
+        saveListCodesToDataBase(codesFromCSV, db);
+        initAllCodesFromDb(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
-
-
-    public static void initDataBase() {
-        DatabaseHelper databaseHelper = getInstance();
-        SQLiteDatabase sqLiteDatabase = databaseHelper.getReadableDatabase();
-        databaseHelper.initAllCodesfromDb(sqLiteDatabase);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 
     /**
-     * Parse CSV file to List and add data to Singleton
+     * Initialize DataBase
+     */
+    public static void initDataBase() {
+        DatabaseHelper databaseHelper = getInstance();
+        SQLiteDatabase sqLiteDatabase = databaseHelper.getReadableDatabase();
+        databaseHelper.initAllCodesFromDb(sqLiteDatabase);
+    }
+
+    /**
+     * Parse CSV file to List and add data to CodesSingleton. Calling only in onCreate DB method.
      *
-     * @param inputStream intputStream of CSV file
+     * @param inputStream inputStream of CSV file
      * @return ArrayList of Code object from CSV file
      */
     private static ArrayList<Code> getListCodesFromCSV(InputStream inputStream) {
@@ -120,27 +123,41 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
                 Log.e("Error while closing IS", e.getMessage());
             }
         }
-        Singleton.getInstance().setCodesList(resultList);
-        Singleton.getInstance().setSumCount(sumOfCounts);
-        Singleton.getInstance().setSumCode(sumOfCodes);
+        CodesSingleton.getInstance().setCodesList(resultList);
+        CodesSingleton.getInstance().setSumCount(sumOfCounts);
+        CodesSingleton.getInstance().setSumCode(sumOfCodes);
         return resultList;
     }
 
-    private void addListCodesToDataBase(ArrayList<Code> codesList, SQLiteDatabase db) {
+    /**
+     * Save list of codes in Database
+     *
+     * @param codesList list of codes
+     * @param db        database
+     */
+    private void saveListCodesToDataBase(ArrayList<Code> codesList, SQLiteDatabase db) {
 
         ContentValues values;
         for (int i = 0; i < codesList.size(); i++) {
             values = new ContentValues();
             Code code = codesList.get(i);
+
             values.put(CODE_COLUMN, code.getCode());
             values.put(COUNT_COLUMN, code.getCount());
             values.put(STATUS_COLUMN, code.getStatus().toString());
+
             if (code.getDate() != null)
                 values.put(DATE_COLUMN, dateFormat.format(code.getDate()));
-            db.insert(DATABASE_TABLE, COUNT_COLUMN, values);
+
+            db.insert(TABLE_NAME, COUNT_COLUMN, values);
         }
     }
 
+    /**
+     * Update codes in database
+     *
+     * @param updateList
+     */
     public void updateCodesInDataBase(ArrayList<Code> updateList) {
 
         ContentValues values;
@@ -149,13 +166,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             Code code = updateList.get(i);
 
             values.put(COUNT_COLUMN, code.getCount());
-            getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
+            getWritableDatabase().update(TABLE_NAME, values, CODE_COLUMN + " =" + code.getCode(), null);
         }
     }
 
-    private void initAllCodesfromDb(SQLiteDatabase db) {
+    /**
+     * Initialize list of codes in CodesSingletone from DataBase
+     *
+     * @param db
+     */
+    private void initAllCodesFromDb(SQLiteDatabase db) {
         ArrayList<Code> codeList = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DATABASE_TABLE;
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
 
@@ -187,10 +209,15 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             } while (cursor.moveToNext());
         }
 
-        Singleton.getInstance().setSumCount(sumOfCount);
-        Singleton.getInstance().setCodesList(codeList);
+        CodesSingleton.getInstance().setSumCount(sumOfCount);
+        CodesSingleton.getInstance().setCodesList(codeList);
     }
 
+    /**
+     * Update state of checking in DataBase
+     *
+     * @param updateList list codes, who need to update
+     */
     public void updateStatusInDataBase(ArrayList<Code> updateList) {
         ContentValues values;
         for (int i = 0; i < updateList.size(); i++) {
@@ -205,7 +232,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             } else {
                 values.put(DATE_COLUMN, (byte[]) null);
             }
-            getWritableDatabase().update(DATABASE_TABLE, values, CODE_COLUMN + " =" + code.getCode(), null);
+            getWritableDatabase().update(TABLE_NAME, values, CODE_COLUMN + " =" + code.getCode(), null);
         }
     }
 

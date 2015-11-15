@@ -2,29 +2,27 @@ package ua.com.ukrelektro.passwordrec.model;
 
 import java.util.ArrayList;
 
-import ua.com.ukrelektro.passwordrec.control.DatabaseHelper;
-
-public class Singleton {
+public class CodesSingleton {
 
 
     private ArrayList<Code> codesList;
     private int currentCountNumber = 0;
     private int sumCount = 0;
     private int sumCode = 0;
-    private DatabaseHelper databaseHelper;
+
 
 
     private int sumPassCount;
-    private static Singleton ourInstance = new Singleton();
+    private static CodesSingleton ourInstance = new CodesSingleton();
 
 
-    public static Singleton getInstance() {
+    public static CodesSingleton getInstance() {
         if (ourInstance == null)
-            ourInstance = new Singleton();
+            ourInstance = new CodesSingleton();
         return ourInstance;
     }
 
-    private Singleton() {
+    private CodesSingleton() {
 
     }
 
@@ -68,11 +66,5 @@ public class Singleton {
         this.sumPassCount = sumPassCount;
     }
 
-    public DatabaseHelper getDatabaseHelper() {
-        return databaseHelper;
-    }
 
-    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
-    }
 }
