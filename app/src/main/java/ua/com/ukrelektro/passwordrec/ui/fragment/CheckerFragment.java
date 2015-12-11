@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ua.com.ukrelektro.passwordrec.R;
-import ua.com.ukrelektro.passwordrec.control.CodeChecker;
-import ua.com.ukrelektro.passwordrec.model.CodesSingleton;
+import ua.com.ukrelektro.passwordrec.model.State;
 
 /**
  * Fragment with CodeChecker
@@ -20,6 +22,13 @@ import ua.com.ukrelektro.passwordrec.model.CodesSingleton;
 public class CheckerFragment extends Fragment {
     public static final int LAYOUT = R.layout.checker_fragment;
     private View view;
+
+    @Bind(R.id.progressBarPercent) ProgressBar pbPercent;
+    @Bind(R.id.progressBarTestedOut) ProgressBar pbPassedCodes;
+    @Bind(R.id.tvCurrentCode) TextView tvCurrentCode;
+    @Bind(R.id.tvPercentCovered) TextView tvPercentCovered;
+    @Bind(R.id.tvTestedOut) TextView tvTestedOut;
+
 
 
     /**
@@ -39,55 +48,68 @@ public class CheckerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(LAYOUT, container, false);
-        initTvCurrentCode();
-        initTvPercentCovered();
-        initTvTestedOut();
-        initProgressBars();
+        ButterKnife.bind(this, view);
+
+        updateTextViev();
+        updateProgressBars();
         return view;
     }
 
-    private void initProgressBars() {
-        final ProgressBar pbPercent = (ProgressBar) view.findViewById(R.id.progressBarPercent);
-        final ProgressBar pbPassedCodes = (ProgressBar) view.findViewById(R.id.progressBarTestedOut);
+    private void updateProgressBars() {
 
         Handler progressBarHandler = new Handler();
         progressBarHandler.post(new Runnable() {
 
             public void run() {
-                pbPassedCodes.setProgress(CodesSingleton.getInstance().getCurrentCountNumber());
-                pbPercent.setProgress((int) CodeChecker.getPercentPassCodes());
+                pbPassedCodes.setProgress(0);
+                pbPercent.setProgress((int) 0);
             }
         });
 
     }
 
     /**
-     * Initialization of TextView with current code
+     * Initialization of TextView
      */
-    private void initTvCurrentCode() {
-        TextView tvCurrentCode = (TextView) view.findViewById(R.id.tvCurrentCode);
-        String currentCode = String.format("%04d", CodeChecker.getCurrentCode().getCode());
+    private void updateTextViev() {
+        String currentCode = String.format("%04d", 0);
+        String percentPassCodes = "0";
+        String testedOut = String.valueOf(0);
         tvCurrentCode.setText(currentCode);
-    }
-
-    /**
-     * Initialization of TextView with code percent covered
-     */
-    private void initTvPercentCovered() {
-        TextView tvPercentCovered = (TextView) view.findViewById(R.id.tvPercentCovered);
-        String result = String.format("%.1f", CodeChecker.getPercentPassCodes());
-        tvPercentCovered.setText(result + " Percent covered");
-
-    }
-
-    /**
-     * Initialization of TextView with number of passed codes
-     */
-    private void initTvTestedOut() {
-        TextView tvTestedOut = (TextView) view.findViewById(R.id.tvTestedOut);
-        String testedOut = String.valueOf(CodesSingleton.getInstance().getCurrentCountNumber());
+        tvPercentCovered.setText(percentPassCodes + " Percent covered");
         tvTestedOut.setText(testedOut + " Tested out of 9,999");
     }
 
+
+
+
+    /**
+     * onClick handler for button "Worked and Next"
+     *
+     * @param view current view
+     */
+    @OnClick({R.id.btnNext, R.id.btnWorked})
+    public void nextNumber(View view) {
+        switch (view.getId()) {
+            case R.id.btnNext:
+
+                break;
+            case R.id.btnWorked:
+
+                break;
+            default:
+                break;
+        }
+
+        updateTextViev();
+        updateProgressBars();
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 
 }

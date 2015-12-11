@@ -8,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ua.com.ukrelektro.passwordrec.R;
-import ua.com.ukrelektro.passwordrec.control.CodeChecker;
 import ua.com.ukrelektro.passwordrec.model.Code;
 import ua.com.ukrelektro.passwordrec.model.State;
 
@@ -21,7 +23,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     public RecyclerViewAdapter() {
-        this.historyList = CodeChecker.getHistoryList();
+        this.historyList = new ArrayList<Code>();
     }
 
     @Override
@@ -48,16 +50,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.tvCodeItemHistory) TextView code;
+        @Bind(R.id.tvTimeItemHistory) TextView time;
+        @Bind(R.id.imageView) ImageView icon;
 
-        private TextView code;
-        private TextView time;
-        private ImageView icon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.code = (TextView) itemView.findViewById(R.id.tvCodeItemHistory);
-            this.time = (TextView) itemView.findViewById(R.id.tvTimeItemHistory);
-            this.icon = (ImageView) itemView.findViewById(R.id.imageView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

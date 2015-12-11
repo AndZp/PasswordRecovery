@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import ua.com.ukrelektro.passwordrec.R;
 import ua.com.ukrelektro.passwordrec.ui.adapter.RecyclerViewAdapter;
 
@@ -17,6 +19,11 @@ import ua.com.ukrelektro.passwordrec.ui.adapter.RecyclerViewAdapter;
 public class HistoryFragment extends Fragment {
     public static final int LAYOUT = R.layout.history_fragment;
     private View view;
+
+    @Bind(R.id.recycler_view)
+    RecyclerView recyclerView;
+
+    private RecyclerViewAdapter adapter;
 
 
     public static HistoryFragment getInstanse() {
@@ -31,16 +38,17 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(LAYOUT, container, false);
-
+        ButterKnife.bind(this, view);
         initRecyclerView();
 
         return view;
     }
 
-    private void initRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter();
+
+    private void initRecyclerView() {
+
+        adapter = new RecyclerViewAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
 
@@ -48,4 +56,16 @@ public class HistoryFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(itemAnimator);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    public void updateRV() {
+        this.adapter = new RecyclerViewAdapter();
+        recyclerView.setAdapter(adapter);
+    }
+
 }
